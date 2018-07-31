@@ -47,6 +47,8 @@ class Game:
                       self.FLOOR, self.FLOOR, self.FLOOR, self.FLOOR]
         self.position = [0, 2]
         self.console = tdl.init(40, 24, title='CodersAI Game')
+        self.game_finished = False
+        self.result = None
 
     def get(self, x: int, y: int) -> int:
         return self.board[self._pos(x, y)]
@@ -94,7 +96,17 @@ class Game:
     def main_loop(self, sig_function):
         while not tdl.event.is_window_closed():
             self.render()
-            self.move(sig_function())
+            self.game_finished = self.get(*self.position) in (self.FINISH, self.FIREPIT)
+            if not self.game_finished:
+                self.move(sig_function())
+            else:
+                self.result = self.get(*self.position) == self.FINISH
+                self.console.draw_str(0, 5, "Game finished!")
+                if self.result:
+                    self.console.draw_str(0, 6, "You won!", fg=(0, 192, 0))
+                else:
+                    self.console.draw_str(0, 6, "You lost!", fg=(255, 0, 0))
+
 
     def _pos(self, x: int, y: int) -> int:
         return x + y * self.size[X]
