@@ -46,6 +46,7 @@ class Game:
                       self.FLOOR, self.WALL, self.FLOOR, self.FIREPIT,
                       self.FLOOR, self.FLOOR, self.FLOOR, self.FLOOR]
         self.position = [0, 2]
+        tdl.set_font("terminal16x16_gs_ro.png")
         self.console = tdl.init(40, 24, title='CodersAI Game')
         self.game_finished = False
         self.result = None
@@ -72,7 +73,7 @@ class Game:
                                            fg=(255, 0, 0), bg=(64, 0, 0))
                 elif field == self.FINISH:
                     self.console.draw_char(x, y, "^",
-                                           fg=(0, 192, 0), bg=(0, 32, 0))
+                                           bg=(0, 192, 0), fg=(0, 32, 0))
         self.console.draw_char(*self.position, "@",
                                fg=(0, 0, 0), bg=(128, 128, 128))
         tdl.flush()
@@ -96,17 +97,18 @@ class Game:
     def main_loop(self, sig_function):
         while not tdl.event.is_window_closed():
             self.render()
-            self.game_finished = self.get(*self.position) in (self.FINISH, self.FIREPIT)
+            self.game_finished = self.get(*self.position) in (
+                self.FINISH, self.FIREPIT
+            )
             if not self.game_finished:
                 self.move(sig_function())
             else:
                 self.result = self.get(*self.position) == self.FINISH
-                self.console.draw_str(0, 5, "Game finished!")
+                self.console.draw_str(0, 5, "Game over!")
                 if self.result:
                     self.console.draw_str(0, 6, "You won!", fg=(0, 192, 0))
                 else:
                     self.console.draw_str(0, 6, "You lost!", fg=(255, 0, 0))
-
 
     def _pos(self, x: int, y: int) -> int:
         return x + y * self.size[X]
